@@ -60,12 +60,8 @@ Things you may want to cover:
 
 ### Association
 
+- belongs_to :user
 - has_one :order
-- belongs_to :category
-- belongs_to :status
-- belongs_to :fee
-- belongs_to :prefecture
-- belongs_to :schedule
 
 
 ## orders テーブル
@@ -79,13 +75,14 @@ Things you may want to cover:
 
 - belongs_to :user
 - belongs_to :item
-- belongs_to :prefecture
+- has_one :address
 
 
 ## addresses テーブル
 
  Column | Type   | Options     |
 | ------ | ------ | ----------- |
+| oreder | references | null: false, foreign_key: true |
 | prefecture_id | integer | null: false |
 | city | string | null: false |
 | address | string | null: false |
@@ -93,4 +90,4 @@ Things you may want to cover:
 
 ### Association
 
-- belongs_to :prefecture
+- belongs_to :order
