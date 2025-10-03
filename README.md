@@ -29,7 +29,6 @@ Things you may want to cover:
 
 | Column             | Type    | Options     |
 | ------------------ | ------- | ----------- |
-| id                 | integer | null: false, primary_key: true |
 | nickname           | string  | null: false |
 | email              | string  | null: false, unique: true |
 | encrypted_password | string  | null: false |
@@ -38,85 +37,60 @@ Things you may want to cover:
 | last_name_kana     | string  | null: false |
 | first_name_kana    | string  | null: false |
 | birth_date         | date    | null: false |
-| created_at         | datetime| null: false |
-| updated_at         | datetime| null: false |
 
 ### Association
 
 - has_many :items
 - has_many :orders
-- has_many :comments
 
 
 ## items テーブル
 
 | Column | Type   | Options     |
 | ------ | ------ | ----------- |
-| id     | integer| null: false, primary_key: true |
 | user | references | null: false, foreign_key: true |
 | name   | string | null: false |
 | item_info | text | null: false |
-| category_id | references | null: false |
-| status_id | references | null: false |
-| fee_type_id | references | null: false |
-| prefecture_id | references | null: false |
-| schedule | references | null: false |
+| category_id | integer | null: false |
+| status_id | integer | null: false |
+| fee_id | integer | null: false |
+| prefecture_id | integer | null: false |
+| schedule_id | integer | null: false |
 | price | integer | null: false |
-| created_at | datetime | null: false |
-| updated_at | datetime | null: false |
 
 ### Association
 
-- belongs_to :user
 - has_one :order
-- has_many :comments
-
-## comments テーブル
-
-| Column  | Type       | Options                        |
-| ------- | ---------- | ------------------------------ |
-| id      | integer    | null: false, primary_key: true |
-| user | references | null: false, foreign_key: true |
-| item_id | references | null: false, foreign_key: true |
-| content | text | null: false |
-
-### Association
-
-- belongs_to :user
-- belongs_to :item
+- belongs_to :category
+- belongs_to :status
+- belongs_to :fee
+- belongs_to :prefecture
+- belongs_to :schedule
 
 
 ## orders テーブル
 
 | Column | Type   | Options     |
 | ------ | ------ | ----------- |
-| id     | integer | null: false, primary_key: true |
 | user | references | null: false, foreign_key: true |
 | item | references | null: false, foreign_key: true |
-| created_at | datetime | null: false |
-| updated_at | datetime | null: false |
 
 ### Association
 
 - belongs_to :user
 - belongs_to :item
+- belongs_to :prefecture
 
 
 ## addresses テーブル
 
-| Column | Type       | Options                        |
-| ------ | ---------- | ------------------------------ |
-| id     | integer | null: false, primary_key: true |
-| order | references | null: false, foreign_key: true |
-| postal_code | string | null: false |
-| prefecture | references | null: false |
-| city | string | null:false |
-| address | text | null:false |
-| building | string | null: true |
-| phone_number | string | null:false |
+ Column | Type   | Options     |
+| ------ | ------ | ----------- |
+| prefecture_id | integer | null: false |
+| city | string | null: false |
+| address | string | null: false |
+| building_name | string |
 
 ### Association
-- belongs_to :user
-- belongs_to :item
-- belongs_to :order
+
 - belongs_to :prefecture
