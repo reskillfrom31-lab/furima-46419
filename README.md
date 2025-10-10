@@ -43,13 +43,12 @@ Things you may want to cover:
 - has_many :items
 - has_many :orders
 
-
 ## items テーブル
 
 | Column | Type   | Options     |
 | ------ | ------ | ----------- |
 | user | references | null: false, foreign_key: true |
-| name   | string | null: false |
+| item_name   | string | null: false |
 | item_info | text | null: false |
 | category_id | integer | null: false |
 | status_id | integer | null: false |
