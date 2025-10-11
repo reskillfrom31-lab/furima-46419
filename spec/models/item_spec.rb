@@ -28,18 +28,30 @@ RSpec.describe Item, type: :model do
       end
 
       #金額指定
+      it '金額が空では登録できない' do
+        @item.price = ''
+        @item.valid?
+        expect(@item.errors.full_messages).to include "Price can't be blank"
+      end
 
       it '金額が300円未満だと登録できない' do
         @item.price = 299
         @item.valid?
-        expect(@item.errors.full_messages).to include "Price can't be blank(only_integer from 300 to 9999999)"
-      end
-      it '金額が9999999円を超えると登録できない' do
-        @item.price = 10000000
-        @item.valid?
-        expect(@item.errors.full_messages).to include "Price can't be blank(only_integer from 300 to 9999999)"
+        expect(@item.errors.full_messages).to include "Price is out of setting range or not half-width number"
       end
 
+      it '金額が9999999円を超えると登録できない' do
+        @item.price = 10_000_000
+        @item.valid?
+        expect(@item.errors.full_messages).to include "Price is out of setting range or not half-width number"
+      end
+
+      it '金額が半角数字以外では登録できない' do
+        @item.price = '３００'
+        @item.valid?
+        expect(@item.errors.full_messages).to include "Price is out of setting range or not half-width number"
+      end
+      
       #文字数制限
       it '商品名が40文字を超えると登録できない' do
         @item.item_name = Faker::Lorem.characters(number: 41)

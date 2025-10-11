@@ -21,8 +21,8 @@ const price = () => {
     taxDom.innerHTML=outputTax;
     profitDom.innerHTML=outputProfit;
 
-    console.log(outputTax);
-    console.log(outputProfit);
+    //console.log(outputTax);
+    //console.log(outputProfit);
   })
 }
 

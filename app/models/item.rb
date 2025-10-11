@@ -14,19 +14,21 @@ class Item < ApplicationRecord
 
   #validations
   
-  # 空欄不可
-  validates :price, 
-    presence: { message: "can't be blank(only_integer from 300 to 9999999)" },
-    numericality: {
+  # 金額
+  
+  validates :price, presence: true
+  validates :price, numericality: {
     only_integer: true,
     greater_than_or_equal_to: 300,
     less_than_or_equal_to: 9_999_999,
-    message: "can't be blank(only_integer from 300 to 9999999)"
+    message: "is out of setting range or not half-width number"
   }
 
+  # 文字数制限
   validates :item_name, 
     presence: {message: "can't be blank(maximum is 40 characters)"},
     length: { maximum: 40 ,message: "can't be blank(maximum is 40 characters)"}
+
   validates :item_info,
     presence: {message: "can't be blank(maximum is 1000 characters)"},
     length: { maximum: 1000  ,message: "can't be blank(maximum is 1000 characters)"}
