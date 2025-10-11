@@ -6,15 +6,18 @@ const price = () => {
 
   //入力するたびに表示が変わる様にする
   priceInput.addEventListener("input", () => {
+
     const inputValue = priceInput.value;
     const priceValue = parseInt(inputValue);
-    
+
     const taxValue = Math.floor(priceValue * 0.1);
     const profitValue = priceValue + taxValue;
 
+    //出力用にint→strに変換
     const outputTax = taxValue.toLocaleString();
     const outputProfit = profitValue.toLocaleString();
-
+    
+    //設定した変数.innerHTML = コンソール出力に使う変数
     taxDom.innerHTML=outputTax;
     profitDom.innerHTML=outputProfit;
 
