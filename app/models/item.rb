@@ -3,8 +3,6 @@ class Item < ApplicationRecord
   #associations
   belongs_to :user
   has_one_attached :image
-  has_one_attached :order
-  
   validates :image, presence: { message: "can't be blank" }
 
   extend ActiveHash::Associations::ActiveRecordExtensions
