@@ -3,7 +3,6 @@ class Item < ApplicationRecord
   #associations
   belongs_to :user
   has_one_attached :image
-  validates :image, presence: { message: "can't be blank" }
 
   extend ActiveHash::Associations::ActiveRecordExtensions
   belongs_to :category
@@ -13,7 +12,10 @@ class Item < ApplicationRecord
   belongs_to :schedule
 
   #validations
-  
+  validates :image, presence: { message: "can't be blank" }, unless: :was_attached?
+  def was_attached?
+    self.image.attached?
+  end
   # 金額
   
   validates :price, presence: true
