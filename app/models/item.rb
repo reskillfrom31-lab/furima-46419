@@ -17,8 +17,8 @@ class Item < ApplicationRecord
   def was_attached?
     self.image.attached?
   end
-  # 金額
   
+  # 金額
   validates :price, presence: true
   validates :price, numericality: {
     only_integer: true,

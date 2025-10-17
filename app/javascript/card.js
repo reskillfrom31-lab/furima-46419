@@ -7,9 +7,9 @@ const pay = () => {
   const expiryElement=elements.create('cardExpiry');
   const cvcElement=elements.create('cardCvc');
 
-  numberElement.mount('#number-form');
-  expiryElement.mount('#expiry-form');
-  cvcElement.mount('#cvc-form');
+  numberElement.mount('number-form');
+  expiryElement.mount('expiry-form');
+  cvcElement.mount('cvc-form');
   
   const form = document.getElementById('charge-form')
   form.addEventListener("submit",(e) => {
@@ -18,8 +18,7 @@ const pay = () => {
       } else {
         const token=response.id;
         const renderDom=document.getElementById('charge-form');
-        const tokenObj=`<input value=${token} name='token'>`;
-
+        const tokenObj=`<input value=${token} name='token' type='hidden'>`;
         renderDom.insertAdjacentHTML("beforeend", tokenObj);
       }
       numberElement.clear();
