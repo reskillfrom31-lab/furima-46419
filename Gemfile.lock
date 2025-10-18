@@ -129,6 +129,11 @@ GEM
     ffi (1.17.2-x86_64-linux-gnu)
     globalid (1.3.0)
       activesupport (>= 6.1)
+    gon (6.5.0)
+      actionpack (>= 3.0.20)
+      i18n (>= 0.7)
+      multi_json
+      request_store (>= 1.0)
     http-accept (1.7.0)
     http-cookie (1.1.0)
       domain_name (~> 0.5)
@@ -172,6 +177,7 @@ GEM
     mini_mime (1.1.5)
     minitest (5.25.5)
     msgpack (1.8.0)
+    multi_json (1.17.0)
     mutex_m (0.3.0)
     mysql2 (0.5.7)
       bigdecimal
@@ -258,6 +264,8 @@ GEM
     regexp_parser (2.11.3)
     reline (0.6.2)
       io-console (~> 0.5)
+    request_store (1.7.0)
+      rack (>= 1.4)
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
@@ -357,6 +365,7 @@ DEPENDENCIES
   devise
   factory_bot_rails
   faker
+  gon
   image_processing (~> 1.2)
   importmap-rails
   jbuilder

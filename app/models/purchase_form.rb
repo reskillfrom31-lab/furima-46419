@@ -55,4 +55,5 @@ class PurchaseForm
       errors.add(:base, message)
     end
     false
+  end
 end

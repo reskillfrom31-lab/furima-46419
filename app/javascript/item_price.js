@@ -1,6 +1,9 @@
 const price = () => {
   //変数設定
   const priceInput = document.getElementById("item-price");
+  
+  if (!priceInput) return;
+
   const taxDom = document.getElementById("add-tax-price");
   const profitDom = document.getElementById("profit");
 

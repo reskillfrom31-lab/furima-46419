@@ -1,5 +1,5 @@
 class OrdersController < ApplicationController
-  before_action :authenticate_user!, except: :index
+  before_action :authenticate_user!
   before_action :set_item, only: [:index, :create]
   #before_action :redirect_if_inappropriate, only: [:index, :create] #出品者自身が購入ページにアクセスしたり、すでに売却済みの商品ページにアクセスしたりするのを防ぐ
 
