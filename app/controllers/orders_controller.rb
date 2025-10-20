@@ -11,6 +11,7 @@ class OrdersController < ApplicationController
   def create
     @purchase_form = PurchaseForm.new(purchase_params)
     if @purchase_form.valid? && @item.order.nil?
+      pay_item # pay_itemメソッドの呼び出しを追加（もしなければ不要）
       @purchase_form.save
       redirect_to root_path
     else

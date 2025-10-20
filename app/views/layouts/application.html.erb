@@ -5,17 +5,18 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <script type="text/javascript" src="https://js.pay.jp/v1/"></script>
     
     <%= include_gon %>
     
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     
-    <%= javascript_importmap_tags %>
+    <script src="https://js.pay.jp/v1/"></script>
+    
+    <%= javascript_importmap_tags %> 
   </head>
 
   <body>
     <%= yield %>
-  </body>
+
+    </body>
 </html>
