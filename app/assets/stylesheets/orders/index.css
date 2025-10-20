@@ -171,11 +171,14 @@
   position: relative;
   z-index: 100;
   min-height: 48px;
+  height: 48px;
   border: 1px solid #ccc;
   border-radius: 4px;
   background: #fff;
   padding: 0;
   margin: 0;
+  display: block;
+  overflow: visible;
 }
 
 /* Payjpのiframeが正しく表示されるようにする */
@@ -184,7 +187,24 @@
 #cvc-form iframe {
   width: 100% !important;
   height: 48px !important;
+  min-height: 48px !important;
   border: none !important;
+  background: transparent !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 101 !important;
+}
+
+/* Payjpのiframe内のinput要素のスタイル */
+#number-form iframe input,
+#expiry-form iframe input,
+#cvc-form iframe input {
+  width: 100% !important;
+  height: 46px !important;
+  border: none !important;
+  outline: none !important;
+  font-size: 16px !important;
+  padding: 0 10px !important;
   background: transparent !important;
 }
 

@@ -5,6 +5,10 @@ class Item < ApplicationRecord
   has_one :order
   has_one_attached :image
 
+  def sold_out?
+    self.order.present?
+  end
+
   extend ActiveHash::Associations::ActiveRecordExtensions
   belongs_to :category
   belongs_to :status

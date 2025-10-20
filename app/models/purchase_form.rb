@@ -27,7 +27,7 @@ class PurchaseForm
     validates :city
     validates :addresses
     validates :phone, format: {
-      with: /\A[0-9]{1,11}\z/,
+      with: /\A[0-9]{10,11}\z/,
       message: "is invalid. Enter a half-width number without hyphens."
     }
   end
