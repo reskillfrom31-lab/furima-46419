@@ -155,3 +155,63 @@
   font-size: 14px;
   cursor: pointer;
 }
+
+/* --- Payjp入力フィールドのスタイル設定 --- */
+
+/* フォーム全体の設定 */
+#charge-form {
+  position: relative;
+  z-index: 50;
+}
+
+/* Payjpの入力フィールドコンテナの設定 */
+#number-form,
+#expiry-form,
+#cvc-form {
+  position: relative;
+  z-index: 100;
+  min-height: 48px;
+  height: 48px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background: #fff;
+  padding: 0;
+  margin: 0;
+  display: block;
+  overflow: visible;
+}
+
+/* Payjpのiframeが正しく表示されるようにする */
+#number-form iframe,
+#expiry-form iframe,
+#cvc-form iframe {
+  width: 100% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  border: none !important;
+  background: transparent !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 101 !important;
+}
+
+/* Payjpのiframe内のinput要素のスタイル */
+#number-form iframe input,
+#expiry-form iframe input,
+#cvc-form iframe input {
+  width: 100% !important;
+  height: 46px !important;
+  border: none !important;
+  outline: none !important;
+  font-size: 16px !important;
+  padding: 0 10px !important;
+  background: transparent !important;
+}
+
+/* 入力フィールドのフォーカス時のスタイル */
+#number-form:focus-within,
+#expiry-form:focus-within,
+#cvc-form:focus-within {
+  border-color: #3ccace;
+  box-shadow: 0 0 0 2px rgba(60, 202, 206, 0.2);
+}

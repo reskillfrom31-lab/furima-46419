@@ -61,4 +61,7 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
+  # Use thread-based execution isolation in tests to avoid Fiber-based connection contention with mysql2
+  config.active_support.isolation_level = :thread
+  config.active_record.async_query_executor = :inline
 end

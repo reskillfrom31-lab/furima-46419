@@ -2,7 +2,12 @@ class Item < ApplicationRecord
   
   #associations
   belongs_to :user
+  has_one :order
   has_one_attached :image
+
+  def sold_out?
+    self.order.present?
+  end
 
   extend ActiveHash::Associations::ActiveRecordExtensions
   belongs_to :category
@@ -16,8 +21,8 @@ class Item < ApplicationRecord
   def was_attached?
     self.image.attached?
   end
-  # 金額
   
+  # 金額
   validates :price, presence: true
   validates :price, numericality: {
     only_integer: true,

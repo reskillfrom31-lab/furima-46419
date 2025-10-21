@@ -5,12 +5,60 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
+    
+    <%= include_gon %>
+    
     <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
-    <%= javascript_importmap_tags %>
+    
+    <%= javascript_importmap_tags %> 
   </head>
 
   <body>
     <%= yield %>
-  </body>
+
+    <!-- Payjpライブラリを直接読み込み（CORSエラーを回避） -->
+    <script src="https://js.pay.jp/v1/"></script>
+    
+    <script>
+      // Payjpライブラリの読み込み状況を監視
+      window.addEventListener('load', function() {
+        console.log('Page fully loaded, checking Payjp availability...');
+        
+        // Payjpライブラリの読み込み確認
+        if (typeof Payjp === 'undefined') {
+          console.log('Payjp library not loaded, enabling fallback mode');
+          // フォールバック機能を有効化
+          if (typeof enableFallbackCardForm === 'function') {
+            enableFallbackCardForm();
+          }
+        } else {
+          console.log('Payjp library loaded successfully');
+          // カードフォームを初期化
+          if (typeof initializeCardForm === 'function') {
+            setTimeout(initializeCardForm, 100);
+          }
+        }
+      });
+      
+      // DOMContentLoadedイベントでも確認
+      document.addEventListener('DOMContentLoaded', function() {
+        console.log('DOMContentLoaded event fired');
+        
+        // 少し待ってからPayjpの読み込み状況を確認
+        setTimeout(function() {
+          if (typeof Payjp === 'undefined') {
+            console.log('Payjp still not available after DOMContentLoaded');
+            if (typeof enableFallbackCardForm === 'function') {
+              enableFallbackCardForm();
+            }
+          } else {
+            console.log('Payjp available after DOMContentLoaded');
+            if (typeof initializeCardForm === 'function') {
+              initializeCardForm();
+            }
+          }
+        }, 500);
+      });
+    </script>
+    </body>
 </html>

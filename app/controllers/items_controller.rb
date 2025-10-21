@@ -1,6 +1,10 @@
 class ItemsController < ApplicationController
   before_action :authenticate_user!, except: [:index, :show]
   before_action :set_item, only: [:show, :edit, :update, :destroy]
+  # 🚨 追加: 売却済みの場合にリダイレクトさせるロジック
+  before_action :redirect_to_root_if_sold_out, only: [:edit, :update, :destroy]
+  
+  # 既存の出品者チェック
   before_action only: [:edit, :update, :destroy] do
     redirect_to root_path unless @item.user_id == current_user.id
   end
@@ -42,6 +46,14 @@ class ItemsController < ApplicationController
   end
 
   private
+
+  def redirect_to_root_if_sold_out
+    if @item.order.present?
+      redirect_to root_path
+    end
+  end
+
+
   def set_item
     @item = Item.find(params[:id])
   end

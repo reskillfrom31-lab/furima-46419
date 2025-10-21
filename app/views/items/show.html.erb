@@ -6,60 +6,60 @@
       <%= @item.item_name %>
     </h2>
     <div class="item-img-content">
-      <%= image_tag @item.image ,class:"item-box-img" %>
-      <%# 商品が売れている場合は、sold outを表示しましょう %>
-      <%#<div class="sold-out">
-        <span>Sold Out!!</span>
-      <%#</div>
-      <%# //商品が売れている場合は、sold outを表示しましょう %>
+      <%= image_tag @item.image, class:"item-box-img" %>
+      <% if @item.order.present? %>
+        <div class="sold-out">
+          <span>Sold Out!!</span>
+        </div>
+      <% end %>
     </div>
     <div class="item-price-box">
       <span class="item-price">
         ¥ <%= @item.price %>
       </span>
       <span class="item-postage">
-        <%= link_to @item.fee.name %>
+        <%= @item.fee.name %>
       </span>
     </div>
 
-    <% if user_signed_in? %>
+    <% if user_signed_in? && @item.order.nil? %>
       <% if current_user.id == @item.user_id %>
-        <%= link_to "商品の編集", edit_item_path(@item), method: :get, class: "item-red-btn" %>
+        <%= link_to "商品の編集" , edit_item_path(@item), method: :get, class: "item-red-btn" %>
         <p class="or-text">or</p>
-        <%= link_to "削除", item_path(@item), data: {turbo_method: :delete}, class: "item-destroy" %>
+        <%= link_to "削除", item_path(@item), data: {turbo_method: :delete}, class: "item-destroy" %>   
       <% else %>
-          <%= link_to "購入画面に進む", "#" ,class:"item-red-btn"%>
-      <% end %>
+        <%= link_to "購入画面に進む", item_orders_path(@item), data: { turbo: false }, class:"item-red-btn"%>
+      <% end %>      
     <% end %>
     
     <div class="item-explain-box">
-      <span><%= link_to @item.item_info %></span>
+      <span><%= @item.item_info %></span>
     </div>
     <table class="detail-table">
       <tbody>
         <tr>
           <th class="detail-item">出品者</th>
-          <td class="detail-value"><%= link_to @item.user.nickname %></td>
+          <td class="detail-value"><%= @item.user.nickname %></td>
         </tr>
         <tr>
           <th class="detail-item">カテゴリー</th>
-          <td class="detail-value"><%= link_to @item.category.name %></td>
+          <td class="detail-value"><%= @item.category.name %></td>
         </tr>
         <tr>
           <th class="detail-item">商品の状態</th>
-          <td class="detail-value"><%= link_to @item.status.name %></td>
+          <td class="detail-value"><%= @item.status.name %></td>
         </tr>
         <tr>
           <th class="detail-item">配送料の負担</th>
-          <td class="detail-value"><%= link_to @item.fee.name %></td>
+          <td class="detail-value"><%= @item.fee.name %></td>
         </tr>
         <tr>
           <th class="detail-item">発送元の地域</th>
-          <td class="detail-value"><%= link_to @item.prefecture.name%></td>
+          <td class="detail-value"><%= @item.prefecture.name%></td>
         </tr>
         <tr>
           <th class="detail-item">発送日の目安</th>
-          <td class="detail-value"><%= link_to @item.schedule.name %></td>
+          <td class="detail-value"><%= @item.schedule.name %></td>
         </tr>
       </tbody>
     </table>
