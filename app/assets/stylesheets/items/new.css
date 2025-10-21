@@ -227,3 +227,7 @@
 .inc {
   font-size: 13px;
 }
+
+.select-box { /* これが原因で、背景色が無効になっていた */
+  margin: 2vh 0; 
+}
