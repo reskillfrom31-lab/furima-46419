@@ -11,12 +11,6 @@ class OrdersController < ApplicationController
   def create
     @purchase_form = PurchaseForm.new(purchase_params)
     
-    # デバッグ用：パラメータをログに出力
-    Rails.logger.info "Purchase form params: #{purchase_params.inspect}"
-    Rails.logger.info "Purchase form valid?: #{@purchase_form.valid?}"
-    Rails.logger.info "Purchase form errors: #{@purchase_form.errors.full_messages}" unless @purchase_form.valid?
-    Rails.logger.info "Item order exists?: #{@item.order.present?}"
-    
     if @purchase_form.valid?
       pay_item
 
@@ -25,12 +19,10 @@ class OrdersController < ApplicationController
       if @purchase_form.save
         redirect_to root_path
       else
-        Rails.logger.error "Purchase form save failed: #{@purchase_form.errors.full_messages}"
         gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
         render :index, status: :unprocessable_entity
       end
     else
-      Rails.logger.error "Purchase form validation failed: #{@purchase_form.errors.full_messages}"
       gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
       render :index, status: :unprocessable_entity
     end

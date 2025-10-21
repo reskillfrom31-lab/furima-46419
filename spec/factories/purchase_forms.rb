@@ -1,8 +1,5 @@
 FactoryBot.define do
   factory :purchase_form do
-    # ユーザーとアイテムIDはテストで上書きされますが、ファクトリ内でも定義しておきます
-    user_id         { FactoryBot.create(:user).id }
-    item_id         { FactoryBot.create(:item).id }
 
     # 必須属性
     token           { 'tok_abcdefghijk00000000000000000' } # ダミーのPAYJPトークン
