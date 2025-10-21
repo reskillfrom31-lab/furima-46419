@@ -374,40 +374,9 @@ const generateTestToken = (cardNumber, expiry, cvc) => {
   return testToken;
 };
 
-// フォールバック通知機能
+// フォールバック通知機能（非表示化）
 const showFallbackNotification = () => {
-  const form = document.getElementById('charge-form');
-  if (!form) return;
-  
-  // 通知メッセージを表示
-  const notificationDiv = document.createElement('div');
-  notificationDiv.style.cssText = `
-    background-color: #e8f4fd;
-    border: 1px solid #b3d9ff;
-    color: #0066cc;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 4px;
-    font-size: 14px;
-    text-align: center;
-  `;
-  notificationDiv.innerHTML = `
-    <strong>代替入力モードが有効になりました</strong><br>
-    Payjpライブラリの読み込みに失敗したため、手動入力フォームを使用します。<br>
-    カード情報を入力して購入を続行できます。<br>
-    <small>※ 開発環境でのテスト用です。本番環境では適切なPayjpライブラリの読み込みが必要です。<br>
-    ※ CORSエラーやネットワーク問題が原因の可能性があります。</small>
-  `;
-  
-  // フォームの最初に通知を挿入
-  form.insertBefore(notificationDiv, form.firstChild);
-  
-  // 5秒後に通知を自動で非表示にする
-  setTimeout(() => {
-    if (notificationDiv.parentNode) {
-      notificationDiv.remove();
-    }
-  }, 5000);
+  return;
 };
 
 // 購入ボタンを有効化する機能
