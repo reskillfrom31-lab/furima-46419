@@ -6,20 +6,20 @@ RSpec.describe PurchaseForm, type: :model do
   let(:item) { FactoryBot.create(:item) }
   let(:purchase_form) { FactoryBot.build(:purchase_form, user_id: user.id, item_id: item.id) }
 
-  before do
+  #before do
     # テスト実行の都度、フォームオブジェクトを初期化するためにsleepを入れることがあります
     # （PAY.JPのAPI制限などを回避するため）
-    sleep 0.1
-  end
+    #sleep 0.1
+  #end
 
   describe '購入者情報の保存' do
     context '必要事項が全て正しく記入できていれば購入できる' do
       it 'すべての値が正しく入力されていれば保存できること' do
-        expect(purchase_form).to be_valid
+        expect { purchase_form.save }.to change { Order.count }.by(1)
       end
       it 'buildingは空でも購入できる' do
         purchase_form.building = ''
-        expect(purchase_form).to be_valid
+        expect { purchase_form.save }.to change { Order.count }.by(1)
       end
     end
 
@@ -76,17 +76,17 @@ RSpec.describe PurchaseForm, type: :model do
       it 'phoneが10桁未満だと保存できない' do
         purchase_form.phone = '090123456' # 9桁
         purchase_form.valid?
-        expect(purchase_form.errors.full_messages).to include('Phone is invalid')
+        expect(purchase_form.errors.full_messages).to include('Phone must be 10 or 11 digits')
       end
       it 'phoneが12桁以上だと保存できない' do
         purchase_form.phone = '090123456789' # 12桁
         purchase_form.valid?
-        expect(purchase_form.errors.full_messages).to include('Phone is invalid')
+        expect(purchase_form.errors.full_messages).to include('Phone must be 10 or 11 digits')
       end
       it 'phoneに半角数字以外が含まれている場合は保存できない' do
         purchase_form.phone = '090-1234-5678'
         purchase_form.valid?
-        expect(purchase_form.errors.full_messages).to include('Phone is invalid')
+        expect(purchase_form.errors.full_messages).to include('Phone is invalid. Input only number')
       end
     end
   end

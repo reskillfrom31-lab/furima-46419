@@ -26,13 +26,11 @@ class OrdersController < ApplicationController
         redirect_to root_path
       else
         Rails.logger.error "Purchase form save failed: #{@purchase_form.errors.full_messages}"
-        @purchase_form = PurchaseForm.new
         gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
         render :index, status: :unprocessable_entity
       end
     else
       Rails.logger.error "Purchase form validation failed: #{@purchase_form.errors.full_messages}"
-      @purchase_form = PurchaseForm.new
       gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
       render :index, status: :unprocessable_entity
     end

@@ -9,7 +9,6 @@ class PurchaseForm
   :building,
   :phone
   
-
   # ここにバリデーションの処理を書く
   with_options presence: true do
     #紐づけ
@@ -21,24 +20,25 @@ class PurchaseForm
 
     #住所
     validates :postal_code, format: {
-      with: /\A[0-9]{3}-[0-9]{4}\z/,
+      with: /\A\d{3}-\d{4}\z/,
       message: "is invalid. Include hyphen(-)"
     }
     validates :city
     validates :addresses
     validates :phone, format: {
-      with: /\A[0-9]{10,11}\z/,
-      message: "is invalid. Enter a half-width number without hyphens."
+      with: /\A\d+\z/,
+      message: "is invalid. Input only number"
     }
   end
   validates :prefecture_id, numericality: {other_than: 0, message: "can't be blank"}
+  validates :phone, length: { in: 10..11, message: 'must be 10 or 11 digits' }, allow_blank: true
 
   def save
     # 各テーブルにデータを保存（下記rescue条件ではバリデーションエラーのままデータベースが作成されてしまう）
     # ﾊﾞﾝﾒｿｯﾄﾞ「!」を記述することで、エラーが起きてもデータベースが保存されず、エラーメッセージがビューに表記される。）
     ActiveRecord::Base.transaction do
-      order = Order.create!(user_id: user_id, item_id: item_id)
-      address = Address.create!(order_id: order.id,
+      order = Order.create!(item_id: item_id, user_id: user_id)
+      Address.create!(order_id: order.id,
         postal_code: postal_code,
         prefecture_id: prefecture_id,
         city: city,
@@ -47,13 +47,5 @@ class PurchaseForm
         phone: phone
       )
     end
-    true
-  # rescue は ActiveRecord::RecordInvalid (create! の例外) を捕捉
-  # full_messagesをﾌｫｰﾑｵﾌﾞｼﾞｪｸﾄの:baseにコピーする
-  rescue ActiveRecord::RecordInvalid => e
-    e.record.errors.full_messages.each do |message|
-      errors.add(:base, message)
-    end
-    false
   end
 end

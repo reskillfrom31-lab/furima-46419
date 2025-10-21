@@ -1,4 +1,6 @@
 const initializeCardForm = () => {
+  // 既にPayjpのiframeがマウント済みなら再初期化しない（DOMベースのガード）
+  if (document.querySelector('#number-form iframe')) return;
   console.log('Initializing card form...');
   
   const form = document.getElementById('charge-form');
@@ -46,6 +48,9 @@ const initializeCardForm = () => {
     return;
   }
 
+  // ここまで到達したら初期化済みフラグを立てる
+  window.__payjpCardInitialized = true;
+
   const payjp = Payjp(publicKey);
   const elements = payjp.elements();
   console.log('Payjp elements created:', elements);
@@ -67,7 +72,7 @@ const initializeCardForm = () => {
 
   // 要素をマウント（エラーハンドリング付き）
   try {
-  numberElement.mount('#number-form');
+    numberElement.mount('#number-form');
     console.log('Card number element mounted successfully');
     
     // マウント後の要素の状態を確認
@@ -86,7 +91,7 @@ const initializeCardForm = () => {
   }
 
   try {
-  expiryElement.mount('#expiry-form');
+    expiryElement.mount('#expiry-form');
     console.log('Card expiry element mounted successfully');
     
     setTimeout(() => {
@@ -98,7 +103,7 @@ const initializeCardForm = () => {
   }
 
   try {
-  cvcElement.mount('#cvc-form');
+    cvcElement.mount('#cvc-form');
     console.log('Card CVC element mounted successfully');
     
     setTimeout(() => {
@@ -117,46 +122,7 @@ const initializeCardForm = () => {
       return;
     }
     
-    // フォームの必須フィールドをチェック
-    const requiredFields = {
-      'postal_code': document.querySelector('input[name="purchase_form[postal_code]"]'),
-      'prefecture_id': document.querySelector('select[name="purchase_form[prefecture_id]"]'),
-      'city': document.querySelector('input[name="purchase_form[city]"]'),
-      'addresses': document.querySelector('input[name="purchase_form[addresses]"]'),
-      'phone': document.querySelector('input[name="purchase_form[phone]"]')
-    };
-    
-    // 必須フィールドのバリデーション
-    for (const [fieldName, element] of Object.entries(requiredFields)) {
-      if (!element || !element.value.trim()) {
-        alert(`${getFieldDisplayName(fieldName)}を入力してください。`);
-        element?.focus();
-        return;
-      }
-    }
-    
-    // 郵便番号の形式チェック
-    const postalCode = requiredFields.postal_code.value;
-    if (!/^\d{3}-\d{4}$/.test(postalCode)) {
-      alert('郵便番号は123-4567の形式で入力してください。');
-      requiredFields.postal_code.focus();
-      return;
-    }
-    
-    // 電話番号の形式チェック
-    const phone = requiredFields.phone.value;
-    if (!/^\d{1,11}$/.test(phone)) {
-      alert('電話番号は半角数字で入力してください。');
-      requiredFields.phone.focus();
-      return;
-    }
-    
-    // 都道府県の選択チェック
-    if (requiredFields.prefecture_id.value === '0' || requiredFields.prefecture_id.value === '') {
-      alert('都道府県を選択してください。');
-      requiredFields.prefecture_id.focus();
-      return;
-    }
+    // クライアントサイドの必須・形式チェックは行わず、サーバ側のバリデーションへ委譲
     
     submitButton.disabled = true;
 
@@ -165,7 +131,7 @@ const initializeCardForm = () => {
         // エラーがあればボタンを有効に戻し、フォーム送信はしない
         console.error('Payjp error:', response.error);
         submitButton.disabled = false;
-        alert('カード情報に誤りがあります。確認してください。');
+        showPayjpError('カード情報に誤りがあります。確認してください。');
       } else {
         const token = response.id;
         const tokenInput = `<input value="${token}" name='purchase_form[token]' type='hidden'>`;
@@ -183,7 +149,7 @@ const initializeCardForm = () => {
     }).catch(function(error) {
       console.error('Token creation failed:', error);
       submitButton.disabled = false;
-      alert('カード情報の処理中にエラーが発生しました。');
+      showPayjpError('カード情報の処理中にエラーが発生しました。');
     });
   });
 };
@@ -356,88 +322,27 @@ const setupFallbackFormSubmission = () => {
     const expiry = document.getElementById('fallback-card-expiry').value;
     const cvc = document.getElementById('fallback-card-cvc').value;
     
-    // 基本的なバリデーション
-    if (!cardNumber || cardNumber.length < 13) {
-      alert('カード番号を正しく入力してください。');
-      return;
+    // ポップアップは使用せず、サーバ側のバリデーションに委譲
+    // フォールバックでもトークンを生成して送信し、住所系の不備はサーバ側でエラー表示
+    const testToken = generateTestToken(cardNumber, expiry, cvc);
+    const tokenInput = `<input value="${testToken}" name='purchase_form[token]' type='hidden'>`;
+    form.insertAdjacentHTML("beforeend", tokenInput);
+
+    // 送信ボタンを無効化して重複送信を防ぐ
+    const submitButton = document.getElementById("button");
+    if (submitButton) {
+      submitButton.disabled = true;
+      submitButton.textContent = '処理中...';
     }
-    
-    if (!expiry || expiry.length !== 5) {
-      alert('有効期限を正しく入力してください（MM/YY形式）。');
-      return;
+
+    // デバッグ用：フォームデータをコンソールに出力
+    console.log('Form data being submitted:');
+    const formData = new FormData(form);
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
     }
-    
-    if (!cvc || cvc.length < 3) {
-      alert('セキュリティコードを正しく入力してください。');
-      return;
-    }
-    
-    // フォームの必須フィールドをチェック
-    const requiredFields = {
-      'postal_code': document.querySelector('input[name="purchase_form[postal_code]"]'),
-      'prefecture_id': document.querySelector('select[name="purchase_form[prefecture_id]"]'),
-      'city': document.querySelector('input[name="purchase_form[city]"]'),
-      'addresses': document.querySelector('input[name="purchase_form[addresses]"]'),
-      'phone': document.querySelector('input[name="purchase_form[phone]"]')
-    };
-    
-    // 必須フィールドのバリデーション
-    for (const [fieldName, element] of Object.entries(requiredFields)) {
-      if (!element || !element.value.trim()) {
-        alert(`${getFieldDisplayName(fieldName)}を入力してください。`);
-        element?.focus();
-        return;
-      }
-    }
-    
-    // 郵便番号の形式チェック
-    const postalCode = requiredFields.postal_code.value;
-    if (!/^\d{3}-\d{4}$/.test(postalCode)) {
-      alert('郵便番号は123-4567の形式で入力してください。');
-      requiredFields.postal_code.focus();
-      return;
-    }
-    
-    // 電話番号の形式チェック
-    const phone = requiredFields.phone.value;
-    if (!/^\d{1,11}$/.test(phone)) {
-      alert('電話番号は半角数字で入力してください。');
-      requiredFields.phone.focus();
-      return;
-    }
-    
-    // 都道府県の選択チェック
-    if (requiredFields.prefecture_id.value === '0' || requiredFields.prefecture_id.value === '') {
-      alert('都道府県を選択してください。');
-      requiredFields.prefecture_id.focus();
-      return;
-    }
-    
-    // 注意メッセージを表示
-    const confirmed = confirm('注意：Payjpライブラリが読み込まれていないため、カード情報は暗号化されていません。\n\nこれは開発環境でのテスト用です。\n\n続行しますか？');
-    
-    if (confirmed) {
-      // より実用的なテストトークンを生成
-      const testToken = generateTestToken(cardNumber, expiry, cvc);
-      const tokenInput = `<input value="${testToken}" name='purchase_form[token]' type='hidden'>`;
-      form.insertAdjacentHTML("beforeend", tokenInput);
-      
-      // 送信ボタンを無効化して重複送信を防ぐ
-      const submitButton = document.getElementById("button");
-      if (submitButton) {
-        submitButton.disabled = true;
-        submitButton.textContent = '処理中...';
-      }
-      
-      // デバッグ用：フォームデータをコンソールに出力
-      console.log('Form data being submitted:');
-      const formData = new FormData(form);
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
-      
-      form.submit();
-    }
+
+    form.submit();
   });
 };
 
