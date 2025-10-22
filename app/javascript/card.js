@@ -122,6 +122,14 @@ const initializeCardForm = () => {
       return;
     }
     
+    // 以下で以前の購入試行で残ったトークンが送信されるのを防ぐ
+    const existingTokenInput = form.querySelector('input[name="purchase_form[token]"]');
+    if (existingTokenInput) {
+        existingTokenInput.remove();
+        console.log('Removed existing token input before attempt.');
+    }
+    // 以上で以前の購入試行で残ったトークンが送信されるのを防ぐ
+
     // クライアントサイドの必須・形式チェックは行わず、サーバ側のバリデーションへ委譲
     
     submitButton.disabled = true;
@@ -318,22 +326,37 @@ const setupFallbackFormSubmission = () => {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     
-    const cardNumber = document.getElementById('fallback-card-number').value.replace(/\s/g, '');
-    const expiry = document.getElementById('fallback-card-expiry').value;
-    const cvc = document.getElementById('fallback-card-cvc').value;
+    const cardNumber = document.getElementById('fallback-card-number')?.value.replace(/\s/g, '') || '';
+    const expiry = document.getElementById('fallback-card-expiry')?.value || '';
+    const cvc = document.getElementById('fallback-card-cvc')?.value || '';
     
-    // ポップアップは使用せず、サーバ側のバリデーションに委譲
-    // フォールバックでもトークンを生成して送信し、住所系の不備はサーバ側でエラー表示
-    const testToken = generateTestToken(cardNumber, expiry, cvc);
-    const tokenInput = `<input value="${testToken}" name='purchase_form[token]' type='hidden'>`;
-    form.insertAdjacentHTML("beforeend", tokenInput);
-
+    // ★★★ 修正箇所 2a: フォーム送信前に既存のトークンフィールドを削除 ★★★
+    const existingTokenInput = form.querySelector('input[name="purchase_form[token]"]');
+    if (existingTokenInput) {
+        existingTokenInput.remove();
+        console.log('Removed existing token input from fallback form.');
+    }
     // 送信ボタンを無効化して重複送信を防ぐ
     const submitButton = document.getElementById("button");
     if (submitButton) {
       submitButton.disabled = true;
       submitButton.textContent = '処理中...';
     }
+
+    let tokenToSend = '';
+
+    // ★★★ 修正箇所 2b: カード番号が空の場合はテストトークンを生成しない ★★★
+    if (cardNumber.length > 0) {
+        tokenToSend = generateTestToken(cardNumber, expiry, cvc);
+    } else {
+        console.log('Fallback: Card number is empty. Sending empty token to trigger server validation.');
+        // tokenToSendは空文字列のまま (サーバーの validates :token, presence: true で弾かれる)
+    }
+    // ★★★ 修正箇所 2b ここまで ★★★
+
+    // tokenToSendが空文字列でも、空の<input>タグとして送信することでサーバー側でエラーとなる
+    const tokenInput = `<input value="${tokenToSend}" name='purchase_form[token]' type='hidden'>`;
+    form.insertAdjacentHTML("beforeend", tokenInput);
 
     // デバッグ用：フォームデータをコンソールに出力
     console.log('Form data being submitted:');

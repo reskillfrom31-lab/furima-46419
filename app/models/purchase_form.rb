@@ -34,6 +34,8 @@ class PurchaseForm
   validates :phone, length: { in: 10..11, message: 'must be 10 or 11 digits' }, allow_blank: true
 
   def save
+    # カード情報が正しく入力されないと、購入画面がリダイレクト
+    return false unless valid?
     # 各テーブルにデータを保存（下記rescue条件ではバリデーションエラーのままデータベースが作成されてしまう）
     # ﾊﾞﾝﾒｿｯﾄﾞ「!」を記述することで、エラーが起きてもデータベースが保存されず、エラーメッセージがビューに表記される。）
     ActiveRecord::Base.transaction do
@@ -47,5 +49,6 @@ class PurchaseForm
         phone: phone
       )
     end
+    return true
   end
 end

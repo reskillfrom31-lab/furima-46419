@@ -11,24 +11,31 @@ class OrdersController < ApplicationController
   def create
     @purchase_form = PurchaseForm.new(purchase_params)
     
-    if @purchase_form.valid?
-      pay_item
+    # tokenが空、または住所情報などにエラーがある場合はここで処理を終了し、エラーを表示
+    unless @purchase_form.valid?
+      # エラー時の共通処理を呼び出し、処理を終了
+      set_public_key_and_render_index
+      return
+    end
 
-      return if performed?
+    # バリデーション通過後、決済処理を実行
+    pay_item
 
-      if @purchase_form.save
-        redirect_to root_path
-      else
-        gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
-        render :index, status: :unprocessable_entity
-      end
+    # pay_item内でリダイレクトが発生した場合（決済エラーなど）は、処理を終了
+    return if performed?
+    # 決済が成功し、リダイレクトが発生しなかった場合のみ、データベースに保存
+    if @purchase_form.save
+      redirect_to root_path
     else
-      gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
-      render :index, status: :unprocessable_entity
+      set_public_key_and_render_index
     end
   end
 
   private
+  def set_public_key_and_render_index
+    gon.public_key = ENV["PAYJP_PUBLIC_KEY"]
+    render :index, status: :unprocessable_entity
+  end
 
   def set_item
     @item = Item.find(params[:item_id])

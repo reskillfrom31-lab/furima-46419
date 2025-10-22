@@ -14,7 +14,7 @@ const price = () => {
     const priceValue = parseInt(inputValue);
 
     const taxValue = Math.floor(priceValue * 0.1);
-    const profitValue = priceValue + taxValue;
+    const profitValue = priceValue - taxValue;
 
     //出力用にint→strに変換
     const outputTax = taxValue.toLocaleString();
