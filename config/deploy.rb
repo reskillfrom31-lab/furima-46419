@@ -52,10 +52,11 @@ namespace :deploy do
   task :custom_precompile do
     on roles(:app) do
       within release_path do
-        # `with` ブロックの代わりに、`execute` の中で直接環境変数を指定し、
-        # `rails` コマンドでアセットプリコンパイルを実行します。
-        # これにより、Railsの環境が確実にロードされます。
-        execute :bundle, :exec, :rails, 'assets:precompile', 'RAILS_ENV=production'
+        # Capistranoの `with` ブロックを復活させ、RAILS_ENVを強制的に設定します。
+        with rails_env: fetch(:rails_env) do
+          # 標準的な `bundle exec rake assets:precompile` で実行します。
+          execute :bundle, :exec, :rake, 'assets:precompile'
+        end
       end
     end
   end
