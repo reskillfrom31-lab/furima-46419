@@ -8,7 +8,7 @@ set :application, 'furima-46419'
 set :repo_url,  'git@github.com:reskillfrom31-lab/furima-46419.git'
 set :branch, 'main'
 
-append :linked_files, "config/database.yml", "config/master.key", "config.ru"
+append :linked_files, "config/database.yml", "config/master.key", "config/config.ru"
 
 # バージョンが変わっても共通で参照するディレクトリを指定
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system', 'public/uploads')
