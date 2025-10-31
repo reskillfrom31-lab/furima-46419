@@ -47,3 +47,18 @@ set :assets_roles, [:web, :app]
 
 # プリコンパイル時に RAILS_ENV を確実に production に設定
 set :rails_env, :production
+
+namespace :deploy do
+  # assets:precompile の前に、アプリケーション環境を強制的にロードするタスクを追加
+  before 'deploy:assets:precompile', 'deploy:force_environment_load'
+
+  desc 'Force Rails environment to load before asset precompilation'
+  task :force_environment_load do
+    on roles(:app) do
+      # ⚠️ 注意: これは Rails アプリケーションの初期化を強制し、
+      # RAILS_GROUPS を空にして production 環境のロードを確実にします。
+      # ログや tmp フォルダのクリーンアップを実行することで環境ロードを誘発します。
+      execute :bundle, :exec, :rake, 'log:clear', 'tmp:clear'
+    end
+  end
+end
