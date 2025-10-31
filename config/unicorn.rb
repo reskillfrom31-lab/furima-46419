@@ -1,5 +1,8 @@
+# config/unicorn.rb
+
 #サーバ上でのアプリケーションコードが設置されているディレクトリを変数に入れておく
-app_path = File.expand_path('../..', __FILE__)  # 「../」が一つ増えている
+# currentディレクトリ (例: /var/www/furima-46419/current) を参照するように修正
+app_path = File.expand_path('..', __FILE__) # 「../」を一つに修正
 
 #アプリケーションサーバの性能を決定する
 worker_processes 1
@@ -8,16 +11,18 @@ worker_processes 1
 working_directory app_path
 
 #Unicornの起動に必要なファイルの設置場所を指定
-pid "#{app_path}/shared/tmp/pids/unicorn.pid"  # 「shared」の中を参照するよう変更
+# Capistranoは current/tmp/pids を shared/tmp/pids にリンクするため、
+# ここでは「/tmp/pids/unicorn.pid」とする
+pid "#{app_path}/tmp/pids/unicorn.pid" # 「shared」を削除
 
 #ポート番号を指定
-listen "#{app_path}/shared/tmp/sockets/unicorn.sock", :backlog => 64, :mode => 0666  # 「shared」の中を参照するよう変更
+listen "#{app_path}/tmp/sockets/unicorn.sock", :backlog => 64, :mode => 0666 # 「shared」を削除
 
 #エラーのログを記録するファイルを指定
-stderr_path "#{app_path}/shared/log/unicorn.stderr.log"  # 「shared」の中を参照するよう変更
+stderr_path "#{app_path}/log/unicorn.stderr.log" # 「shared」を削除
 
 #通常のログを記録するファイルを指定
-stdout_path "#{app_path}/shared/log/unicorn.stdout.log"  # 「shared」の中を参照するよう変更
+stdout_path "#{app_path}/log/unicorn.stdout.log" # 「shared」を削除
 
 #Railsアプリケーションの応答を待つ上限時間を設定
 timeout 60
