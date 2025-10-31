@@ -7,7 +7,7 @@ lock '3.19.2'
 set :application, 'furima-46419'
 
 # どのリポジトリからアプリをpullするかを指定する
-set :repo_url,  'git@github.com:reskillfrom31-lab/furima-46419.git'
+set :repo_url, 'git@github.com:reskillfrom31-lab/furima-46419.git'
 set :branch, 'main'
 
 # シンボリックリンクを貼るファイル（共有ファイル）
@@ -22,7 +22,7 @@ set :rbenv_ruby, '3.2.0' # Rubyのバージョン
 
 # どの公開鍵を利用してデプロイするか
 set :ssh_options, auth_methods: ['publickey'],
-                                  keys: ['~/.ssh/my-key-pair.pem'] 
+                  keys: ['~/.ssh/my-key-pair.pem'] 
 
 # Unicornの設定
 set :unicorn_pid, -> { "#{shared_path}/tmp/pids/unicorn.pid" }
@@ -32,9 +32,9 @@ set :keep_releases, 5 # 保持するリリースの数
 # デプロイ処理が終わった後、Unicornを再起動するための記述
 after 'deploy:publishing', 'deploy:restart'
 namespace :deploy do
-  task :restart do
-    invoke 'unicorn:restart'
-  end
+	task :restart do
+		invoke 'unicorn:restart'
+	end
 end
 
 # アセット関連の設定 (Capistranoの自動実行を無効化するため、assets_rolesの設定は削除しました)
