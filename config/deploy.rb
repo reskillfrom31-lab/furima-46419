@@ -34,3 +34,10 @@ namespace :deploy do
     invoke 'unicorn:restart'
   end
 end
+
+# アセットプリコンパイル時に必要な環境変数を明示的に設定
+# Rails 6/7 (master.keyを使う場合) では RAILS_MASTER_KEYが必要
+set :default_env, {
+  'RAILS_MASTER_KEY' => ENV['RAILS_MASTER_KEY'],
+  'SECRET_KEY_BASE' => ENV['SECRET_KEY_BASE'] # <-- 今回追加
+}
