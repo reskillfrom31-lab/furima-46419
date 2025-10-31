@@ -10,6 +10,10 @@ worker_processes 1
 #アプリケーションの設置されているディレクトリを指定
 working_directory app_path
 
+# Rackアプリの起動ファイルを明示的に指定
+# Capistranoでは current/config.ru がアプリのルートに置かれる
+rackup "#{app_path}/config.ru"
+
 #Unicornの起動に必要なファイルの設置場所を指定
 # Capistranoは current/tmp/pids を shared/tmp/pids にリンクするため、
 # ここでは「/tmp/pids/unicorn.pid」とする
