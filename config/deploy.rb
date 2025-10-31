@@ -55,10 +55,10 @@ namespace :deploy do
   desc 'Force Rails environment to load before asset precompilation'
   task :force_environment_load do
     on roles(:app) do
-      # ⚠️ 注意: これは Rails アプリケーションの初期化を強制し、
-      # RAILS_GROUPS を空にして production 環境のロードを確実にします。
-      # ログや tmp フォルダのクリーンアップを実行することで環境ロードを誘発します。
-      execute :bundle, :exec, :rake, 'log:clear', 'tmp:clear'
+      # ⚠️ within current_path を追加し、現在のリリースディレクトリでコマンドを実行するように修正
+      within current_path do
+        execute :bundle, :exec, :rake, 'log:clear', 'tmp:clear'
+      end
     end
   end
 end
