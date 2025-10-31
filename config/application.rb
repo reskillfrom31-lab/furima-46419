@@ -1,5 +1,17 @@
 require_relative "boot"
 
+# **【重要】NoMethodError: private method `warn' called for nil:NilClass 対策**
+# Capistranoデプロイ時の assets:precompile において、SprocketsがRails.loggerの初期化より
+# 早くロードされ、nilに対してメソッドを呼び出してしまう問題を回避します。
+# 修正として、アプリケーションのブート段階よりも更に早くロガーを強制的に設定します。
+unless defined?(Rails.logger) && Rails.logger
+  require 'logger'
+  # Rakeタスク実行時に logger が nil の場合に、標準出力を使うロガーを仮設定
+  Rails.logger = Logger.new(STDOUT) 
+  # ログレベルを上げて、assets:precompile実行時の不要な大量出力を抑制します
+  Rails.logger.level = Logger::WARN 
+end
+
 require "rails/all"
 
 # Require the gems listed in Gemfile, including any gems
@@ -8,19 +20,7 @@ Bundler.require(*Rails.groups)
 
 module Furima46419
   class Application < Rails::Application
-    # **【重要】NoMethodError: private method `warn' called for nil:NilClass 対策**
-    # Capistranoデプロイ時の assets:precompile において、SprocketsがRails.loggerの初期化より
-    # 早くロードされ、nilに対してメソッドを呼び出してしまう問題を回避します。
-    config.before_initialize do
-      # ロガーが未定義の場合、標準出力に書き出すダミーのロガーを強制的に設定します。
-      unless Rails.logger
-        require 'logger'
-        # Rakeタスク実行時に logger が nil の場合に、標準出力を使うロガーを仮設定
-        Rails.logger = Logger.new(STDOUT) 
-        # ログレベルを上げて、assets:precompile実行時の不要な大量出力を抑制します
-        Rails.logger.level = Logger::WARN 
-      end
-    end
+    # 以前の config.before_initialize ブロックは削除されました。
     
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
