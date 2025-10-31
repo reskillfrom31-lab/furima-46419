@@ -41,3 +41,9 @@ set :default_env, {
   'RAILS_MASTER_KEY' => ENV['RAILS_MASTER_KEY'],
   'SECRET_KEY_BASE' => ENV['SECRET_KEY_BASE'] # <-- 今回追加
 }
+
+# アセット関連のタスクを実行するロールを指定（デフォルト設定を明示的に指定）
+set :assets_roles, [:web, :app]
+
+# プリコンパイル時に RAILS_ENV を確実に production に設定
+set :rails_env, :production
