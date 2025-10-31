@@ -15,14 +15,13 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: root
   password:
-  socket: /tmp/mysql.sock
+  host: localhost
 
 development:
   <<: *default
   adapter: mysql2
   username: root
   password:
-  host: localhost
   database: furima_46419_development
 
 # Warning: The database defined as "test" will be erased and
@@ -33,7 +32,6 @@ test:
   adapter: mysql2
   username: root
   password:
-  host: localhost
   database: furima_46419_test
 
 # As with config/credentials.yml, you never want to store sensitive information,
@@ -61,4 +59,4 @@ production:
   database: furima_46419_production
   username: root
   password: <%= ENV['DATABASE_PASSWORD'] %>
-  socket: /var/lib/mysql/mysql.sock
+  host: 127.0.0.1
