@@ -41,15 +41,23 @@ set :assets_roles, [:web, :app]
 # プリコンパイル時に RAILS_ENV を確実に production に設定
 set :rails_env, :production
 
+# ----------------------------------------------------------------------
+# アセットプリコンパイル時の NoMethodError 対策 (強力な修正)
+# ----------------------------------------------------------------------
+# capistrano/railsが定義する assets:precompile タスクをクリアし、
+# アプリケーションをフルロードしてから precompile を実行するように再定義します。
+
+Rake::Task["deploy:assets:precompile"].clear_actions
+
 namespace :deploy do
   namespace :assets do
-    desc 'Force environment loading before assets:precompile to fix NoMethodError'
-    before :precompile, :force_environment_check do
-      on roles(:app) do
+    desc 'Precompile assets'
+    task :precompile do
+      on roles :app do
         within release_path do
           with rails_env: fetch(:rails_env) do
-            # assets:environment を実行し、Rails環境（特にRails.logger）をロードします。
-            execute :bundle, :exec, :rake, 'assets:environment'
+            # アプリケーションの環境変数を確実にロードし、プリコンパイルを実行
+            execute :bundle, :exec, :rake, 'assets:precompile'
           end
         end
       end
