@@ -8,6 +8,18 @@ Bundler.require(*Rails.groups)
 
 module Furima46419
   class Application < Rails::Application
+    # **【重要】NoMethodError: private method `warn' called for nil:NilClass 対策**
+    # Capistranoデプロイ時の assets:precompile において、SprocketsがRails.loggerの初期化より
+    # 早くロードされ、nilに対してメソッドを呼び出してしまう問題を回避します。
+    config.before_initialize do
+      # ロガーが未定義の場合、標準出力に書き出すダミーのロガーを強制的に設定します。
+      unless Rails.logger
+        require 'logger'
+        Rails.logger = Logger.new(STDOUT) 
+        Rails.logger.level = Logger::WARN # ログレベルを上げて、不要な出力を抑制します
+      end
+    end
+    
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 7.1
     config.active_storage.variant_processor = :mini_magick
@@ -24,18 +36,6 @@ module Furima46419
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
-    # **【重要】NoMethodError: private method `warn' called for nil:NilClass 対策**
-    # Capistranoデプロイ時の assets:precompile において、SprocketsがRails.loggerの初期化より
-    # 早くロードされ、nilに対してメソッドを呼び出してしまう問題を回避します。
-    config.before_initialize do
-      # ロガーが未定義の場合、標準出力に書き出すダミーのロガーを強制的に設定します。
-      unless Rails.logger
-        require 'logger'
-        Rails.logger = Logger.new(STDOUT) 
-        Rails.logger.level = Logger::WARN # ログレベルを上げて、不要な出力を抑制します
-      end
-    end
 
   end
 end
