@@ -57,7 +57,7 @@ namespace :deploy do
     on roles(:app) do
       # ⚠️ within current_path を追加し、現在のリリースディレクトリでコマンドを実行するように修正
       within current_path do
-        execute :bundle, :exec, :rake, 'log:clear', 'tmp:clear'
+        execute :bundle, :exec, :rake, 'tmp:clear' # <-- 'log:clear' を削除
       end
     end
   end
