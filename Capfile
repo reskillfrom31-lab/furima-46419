@@ -1,3 +1,7 @@
+# Capistranoのデプロイメントログの冒頭にあった非推奨の警告を解消します。
+
+require "capistrano/scm/git"
+install_plugin Capistrano::SCM::Git
 require "capistrano/setup"
 require "capistrano/deploy"
 require 'capistrano/rbenv'

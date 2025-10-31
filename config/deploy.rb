@@ -35,13 +35,6 @@ namespace :deploy do
   end
 end
 
-# アセットプリコンパイル時に必要な環境変数を明示的に設定
-# Rails 6/7 (master.keyを使う場合) では RAILS_MASTER_KEYが必要
-set :default_env, {
-  'RAILS_MASTER_KEY' => ENV['RAILS_MASTER_KEY'],
-  'SECRET_KEY_BASE' => ENV['SECRET_KEY_BASE'] # <-- 今回追加
-}
-
 # アセット関連のタスクを実行するロールを指定（デフォルト設定を明示的に指定）
 set :assets_roles, [:web, :app]
 
@@ -49,15 +42,16 @@ set :assets_roles, [:web, :app]
 set :rails_env, :production
 
 namespace :deploy do
-  # assets:precompile の前に、アプリケーション環境を強制的にロードするタスクを追加
-  before 'deploy:assets:precompile', 'deploy:force_environment_load'
-
-  desc 'Force Rails environment to load before asset precompilation'
-  task :force_environment_load do
-    on roles(:app) do
-      # ⚠️ within current_path を追加し、現在のリリースディレクトリでコマンドを実行するように修正
-      within current_path do
-        execute :bundle, :exec, :rake, 'tmp:clear' # <-- 'log:clear' を削除
+  namespace :assets do
+    desc 'Force environment loading before assets:precompile to fix NoMethodError'
+    before :precompile, :force_environment_check do
+      on roles(:app) do
+        within release_path do
+          with rails_env: fetch(:rails_env) do
+            # assets:environment を実行し、Rails環境（特にRails.logger）をロードします。
+            execute :bundle, :exec, :rake, 'assets:environment'
+          end
+        end
       end
     end
   end
