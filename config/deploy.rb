@@ -52,10 +52,10 @@ namespace :deploy do
   task :custom_precompile do
     on roles(:app) do
       within release_path do
-        with rails_env: fetch(:rails_env) do
-          # アプリケーションの環境変数を確実にロードし、プリコンパイルを実行
-          execute :bundle, :exec, :rake, 'assets:precompile'
-        end
+        # `with` ブロックの代わりに、`execute` の中で直接環境変数を指定し、
+        # `rails` コマンドでアセットプリコンパイルを実行します。
+        # これにより、Railsの環境が確実にロードされます。
+        execute :bundle, :exec, :rails, 'assets:precompile', 'RAILS_ENV=production'
       end
     end
   end
