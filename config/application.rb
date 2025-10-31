@@ -36,6 +36,8 @@ module Furima46419
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-
+    if defined?(Rake::DSL) && Rake.application.top_level_tasks.any? { |t| t.start_with?('assets:') }
+      Rails.application.initialize! unless Rails.application.initialized?
+    end
   end
 end
