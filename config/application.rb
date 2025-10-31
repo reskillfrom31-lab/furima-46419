@@ -15,8 +15,10 @@ module Furima46419
       # ロガーが未定義の場合、標準出力に書き出すダミーのロガーを強制的に設定します。
       unless Rails.logger
         require 'logger'
+        # Rakeタスク実行時に logger が nil の場合に、標準出力を使うロガーを仮設定
         Rails.logger = Logger.new(STDOUT) 
-        Rails.logger.level = Logger::WARN # ログレベルを上げて、不要な出力を抑制します
+        # ログレベルを上げて、assets:precompile実行時の不要な大量出力を抑制します
+        Rails.logger.level = Logger::WARN 
       end
     end
     
@@ -36,8 +38,5 @@ module Furima46419
     #
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
-    if defined?(Rake::DSL) && Rake.application.top_level_tasks.any? { |t| t.start_with?('assets:') }
-      Rails.application.initialize! unless Rails.application.initialized?
-    end
   end
 end
