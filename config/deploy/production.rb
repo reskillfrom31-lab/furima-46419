@@ -60,3 +60,6 @@
 #     # password: "please use keys"
 #   }
 server '3.115.160.151', user: 'ec2-user', roles: %w{app db web}
+set :default_env, {
+  'DATABASE_PASSWORD' => 'unicorn71' 
+}
