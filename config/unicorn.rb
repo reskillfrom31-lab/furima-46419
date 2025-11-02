@@ -2,7 +2,8 @@
 
 #サーバ上でのアプリケーションコードが設置されているディレクトリを変数に入れておく
 # currentディレクトリ (例: /var/www/furima-46419/current) を参照するように修正
-app_path = File.expand_path('..', __FILE__) # 「../」を一つに修正
+# __FILE__ は config/unicorn.rb を指すので、アプリケーションルートを取得するには2階層上がる必要がある
+app_path = File.expand_path('../..', __FILE__)
 
 #アプリケーションサーバの性能を決定する
 worker_processes 1

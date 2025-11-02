@@ -64,3 +64,17 @@ end
 
 # Gemのインストール（bundler:install）が完了した直後に、手動でプリコンパイルを実行します。
 after 'bundler:install', 'deploy:custom_precompile'
+
+# tmp/pids ディレクトリが確実に存在し、書き込み可能であることを保証するタスク
+namespace :deploy do
+  desc 'Ensure tmp/pids directory exists and is writable'
+  task :ensure_tmp_pids do
+    on roles(:app) do
+      execute :mkdir, '-p', "#{shared_path}/tmp/pids"
+      execute :chmod, '755', "#{shared_path}/tmp/pids"
+    end
+  end
+end
+
+# デプロイ開始前に tmp/pids ディレクトリを確認
+before 'deploy:check:linked_dirs', 'deploy:ensure_tmp_pids'
