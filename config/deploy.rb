@@ -11,7 +11,7 @@ set :repo_url, 'git@github.com:reskillfrom31-lab/furima-46419.git'
 set :branch, 'main'
 
 # シンボリックリンクを貼るファイル（共有ファイル）
-append :linked_files, "config/database.yml", "config/master.key", "config/config.ru"
+append :linked_files, "config/database.yml", "config/master.key"
 
 # シンボボリックリンクを貼るディレクトリ（共有ディレクトリ）
 set :linked_dirs, fetch(:linked_dirs, []).push('log', 'tmp/pids', 'tmp/cache', 'tmp/sockets', 'vendor/bundle', 'public/system', 'public/uploads')
